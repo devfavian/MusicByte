@@ -5,29 +5,29 @@ import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.managers.AudioManager;
 
-public class Join {
+public class Leave {
 	public void handle(SlashCommandInteractionEvent event) {
 		VoiceChannel channel = (VoiceChannel) event.getMember().getVoiceState().getChannel();
+		AudioManager audio = event.getMember().getGuild().getAudioManager();
 		
 		
 		EmbedBuilder embed = new EmbedBuilder();
 		
-		if(channel == null) {
-			embed.setDescription("You are not in a voice channel");
+		if(audio.isConnected() && audio.getConnectedChannel() == channel) {
+			audio.closeAudioConnection();
+			embed.setDescription("Disconnected");
 			event.replyEmbeds(embed.build()).setEphemeral(true).queue();
 			return;
 		}
-		
-		AudioManager audio = event.getMember().getGuild().getAudioManager();
-		
-		if(audio.isConnected()) {
-			embed.setDescription("The bot is in another voice channel!");
+		else if(audio.getConnectedChannel() != channel) {
+			embed.setDescription("The bot is not in your voice channel");
 			event.replyEmbeds(embed.build()).setEphemeral(true).queue();
 			return;
 		}
-		
-		audio.openAudioConnection(channel);
-		embed.setDescription("Connected");
-		event.replyEmbeds(embed.build()).setEphemeral(true).queue();
+		else {
+			embed.setDescription("The bot is not in a voice channel");
+			event.replyEmbeds(embed.build()).setEphemeral(true).queue();
+			return;
+		}
 	}
 }
