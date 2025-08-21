@@ -6,6 +6,10 @@ It supports modern **slash commands** and provides reliable music features such 
 > **Project status:** 🟢 **Stable** • 🎶 **Actively maintained** — Designed as a practical learning project that want to evolve into a full-featured music bot.  
 > You can contact me for help, feature requests, or troubleshooting.
 
+
+> ℹ️ Useful note: the LavaPlayer dependency used in this project was taken from the [official Maven repository (lavaplayer-2.2.4.pom)](https://repo1.maven.org/maven2/dev/arbjerg/lavaplayer/2.2.4/lavaplayer-2.2.4.pom).
+
+
 ---
 
 ## ✨ Features
