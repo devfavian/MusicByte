@@ -1,33 +1,44 @@
 package commands;
 
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.managers.AudioManager;
+import net.dv8tion.jda.api.entities.channel.unions.AudioChannelUnion;
 
 public class Join {
-	public void handle(SlashCommandInteractionEvent event) {
-		VoiceChannel channel = (VoiceChannel) event.getMember().getVoiceState().getChannel();
+	
+	public static String ensureConnection(SlashCommandInteractionEvent event) {
+		Member m = event.getMember();
 		
+		if(m == null || m.getVoiceState() == null)	return "I can't determine your voice state.";
 		
-		EmbedBuilder embed = new EmbedBuilder();
+		AudioChannelUnion channel = m.getVoiceState().getChannel();
 		
-		if(channel == null) {
-			embed.setDescription("You are not in a voice channel");
-			event.replyEmbeds(embed.build()).setEphemeral(true).queue();
-			return;
-		}
+		if(channel == null) return "You must be in a voice channel.";
 		
-		AudioManager audio = event.getMember().getGuild().getAudioManager();
+		AudioManager audio = event.getGuild().getAudioManager();
 		
-		if(audio.isConnected()) {
-			embed.setDescription("The bot is in another voice channel!");
-			event.replyEmbeds(embed.build()).setEphemeral(true).queue();
-			return;
-		}
+        // Already connected in a different channel?
+        if (audio.isConnected() && audio.getConnectedChannel() != null
+                && !audio.getConnectedChannel().equals(channel)) {
+            return "I'm already connected to another voice channel.";
+        }
+        
+        if(!audio.isConnected()) {
+        	audio.openAudioConnection(channel);
+        	audio.setSelfDeafened(true);
+        }
+        
+        return null;
 		
-		audio.openAudioConnection(channel);
-		embed.setDescription("Connected");
-		event.replyEmbeds(embed.build()).setEphemeral(true).queue();
 	}
+	
+	public void handle(SlashCommandInteractionEvent event) {
+        String error = ensureConnection(event);
+        EmbedBuilder embed = new EmbedBuilder();
+        embed.setDescription(error == null ? "Connected." : "❌ " + error);
+        event.replyEmbeds(embed.build()).setEphemeral(true).queue();
+	}
+	
 }
