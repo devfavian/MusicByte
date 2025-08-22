@@ -8,6 +8,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 public class BotListener extends ListenerAdapter{
 	Join join = new Join();
 	Leave leave = new Leave();
+	Play play = new Play();
 	
     @Override
     public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
@@ -16,6 +17,7 @@ public class BotListener extends ListenerAdapter{
     		
     	case "join" -> join.handle(event);
     	case "leave" -> leave.handle(event);
+    	case "play" -> play.handle(event);
     	}
     }
 }

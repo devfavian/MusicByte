@@ -9,7 +9,7 @@ import net.dv8tion.jda.api.requests.GatewayIntent;
 
 public class Main {
     public static void main(String[] args) throws Exception {
-        JDA jda = JDABuilder.createDefault("TOKEN")		//discord developers bot token
+        JDA jda = JDABuilder.createDefault("YOUR_TOKEN")		//discord developers bot token
         		  .enableIntents(   GatewayIntent.GUILD_MEMBERS,
         				    		GatewayIntent.GUILD_PRESENCES,
         				    		GatewayIntent.GUILD_MESSAGES,
@@ -29,7 +29,9 @@ public class Main {
             if (testGuild != null) {
                 testGuild.updateCommands().addCommands(
                 	    Commands.slash("join", "Connects the bot to your current voice channel"),
-                	    Commands.slash("leave", "Disconnects the bot from the voice channel")
+                	    Commands.slash("leave", "Disconnects the bot from the voice channel"),
+                	    Commands.slash("play", "Plays a track or playlist by URL or YouTube search\r\n")
+                	    	.addOption(OptionType.STRING, "query", "URL", true)
                 ).queue();
                 System.out.println("Guild commands saved (DEV_MODE)");
             }
