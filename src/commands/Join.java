@@ -25,6 +25,13 @@ public class Join {
             return "I'm already connected to another voice channel.";
         }
         
+        // Ensure the sending handler is attached (important after /leave)
+        var pm  = utils.PlayerManager.getInstance();
+        var gmm = pm.getGuildMusicManager(event.getGuild());
+        if (audio.getSendingHandler() == null) {
+            audio.setSendingHandler(gmm.getSendHandler());
+        }
+        
         if(!audio.isConnected()) {
         	audio.openAudioConnection(channel);
         	audio.setSelfDeafened(true);

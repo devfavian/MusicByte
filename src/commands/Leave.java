@@ -4,6 +4,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.managers.AudioManager;
+import utils.PlayerManager;
 
 public class Leave {
 	public void handle(SlashCommandInteractionEvent event) {
@@ -14,6 +15,8 @@ public class Leave {
 		EmbedBuilder embed = new EmbedBuilder();
 		
 		if(audio.isConnected() && audio.getConnectedChannel() == channel) {
+			PlayerManager.getInstance().stop(event.getGuild());
+			audio.setSendingHandler(null);
 			audio.closeAudioConnection();
 			embed.setDescription("Disconnected");
 			event.replyEmbeds(embed.build()).setEphemeral(true).queue();
